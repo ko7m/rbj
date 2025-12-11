@@ -315,23 +315,28 @@ def freqz_eq(eq: ParametricEQ, Fs=48000.0, worN=2048):
     """
     Combined frequency response of all bands in a ParametricEQ.
     Returns (freqs_Hz, H_total_complex).
+    If there are no bands, returns a flat response (H_total = 1).
     """
     w = np.linspace(0.0, np.pi, worN)
     H_total = np.ones_like(w, dtype=np.complex128)
+    freqs = w * Fs / (2.0 * np.pi)
 
     for band in eq.bands:
         b = band.biquad
-        freqs, H = freqz_biquad(b.b0, b.b1, b.b2, b.a1, b.a2, Fs=Fs, worN=worN)
-        H_total *= H  # cascade = product of transfer functions
+        f, H = freqz_biquad(b.b0, b.b1, b.b2, b.a1, b.a2, Fs=Fs, worN=worN)
+        H_total *= H
 
     return freqs, H_total
 
 
 def plot_eq_response(eq: ParametricEQ, Fs=48000.0, worN=2048,
-                     show_bands=False):
+                     show_bands=False, xlim=None, ylim=None):
     """
     Plot magnitude response of the whole EQ.
-    If show_bands=True, also plot each band's response faintly.
+    If show_bands=True, also plot each band's response.
+
+    xlim: optional (xmin, xmax) in Hz. If None, defaults to (20, Fs/2).
+    ylim: optional (ymin, ymax) in dB. If None, matplotlib chooses.
     """
     import matplotlib.pyplot as plt
 
@@ -353,7 +358,17 @@ def plot_eq_response(eq: ParametricEQ, Fs=48000.0, worN=2048,
     plt.ylabel("Magnitude (dB)")
     plt.title("Parametric EQ Magnitude Response")
     plt.grid(True, which="both", linestyle=":")
+
+    # Keep original defaults if not supplied
+    if xlim is not None:
+        plt.xlim(xlim)
+    else:
+        plt.xlim([20, Fs / 2])
+
+    if ylim is not None:
+        plt.ylim(ylim)
+    # else: let matplotlib auto-scale
+
     plt.legend()
-    plt.xlim([20, Fs/2])
     plt.show()
 
