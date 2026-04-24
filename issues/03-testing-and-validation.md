@@ -67,6 +67,13 @@ Reports PASS/FAIL per test and prints detailed mismatch info on failure
 - Copies `rbj_golden.txt` into the build directory so the test can find it
 - Provides a `run_tests` custom target: `cmake --build . --target run_tests`
 
+## Cleanup (commit `2e7d464`)
+
+The `gen_golden.py` file was cleaned up to remove conversational comments
+left over from its AI-assisted creation: `"your module above"` →
+`rbj_eq`, `"add more as desired"` removed, `"your Python Biquad"` →
+`"Python Biquad"`. No functional changes.
+
 ## How to Run
 
 ```bash

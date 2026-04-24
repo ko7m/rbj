@@ -54,6 +54,18 @@ An Exuberant Ctags index of `rbj_eq.hpp` and `test_rbj.cpp`. Provides
 jump-to-definition data for editors. Lists all classes, structs, member
 variables, and functions in the C++ codebase.
 
+## `FilterTypes.odt` — Filter Type Reference Notes
+
+An OpenDocument file added in commit `4f293a6` ("Notes on filter types").
+Binary format — contains documentation/notes on the various biquad filter
+types and their characteristics. This is a companion to `biquadcookbook.txt`,
+likely with additional formatting, diagrams, or personal annotations.
+
+## `issues/agent` — Agent Resume Script
+
+A 3-line bash script that resumes a previous Cursor agent session by ID.
+Used for continuing documentation work across sessions.
+
 ## `.gitignore`
 
 Standard Python `.gitignore` (generated template). Also ignores `tags`.
