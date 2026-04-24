@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-import numpy as np
-import rbj_eq  # your module above
 
-# A small set of test cases; add more as desired.
+import numpy as np
+import rbj_eq
+
+# A small set of test cases
 TESTS = [
     # kind, f0,   Q,      gain_db,  S,    Fs
     ("lpf",      1000.0, 0.707,   0.0,    1.0, 48000.0),
@@ -45,7 +46,7 @@ def main():
             # Design coefficients
             b0, b1, b2, a1, a2 = design_band(kind, f0, Q, gain_db, S, Fs)
 
-            # Impulse response via your Python Biquad
+            # Impulse response via Python Biquad
             bq = rbj_eq.Biquad(b0, b1, b2, a1, a2)
             x = np.zeros(IMPULSE_LEN, dtype=np.float64)
             x[0] = 1.0
