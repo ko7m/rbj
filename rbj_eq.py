@@ -13,6 +13,8 @@ def _omega0(f0: float, Fs: float) -> float:
     return 2.0 * np.pi * f0 / Fs
 
 def _alpha_from_Q(w0: float, Q: float) -> float:
+    if Q <= 0:
+        raise ValueError(f"Q must be positive, got {Q}")
     return np.sin(w0) / (2.0 * Q)
 
 def _normalize(b0, b1, b2, a0, a1, a2):
@@ -121,6 +123,8 @@ def design_peaking(f0: float, Q: float, dBgain: float, Fs: float):
 
 
 def design_lowshelf(f0: float, dBgain: float, S: float, Fs: float):
+    if S <= 0:
+        raise ValueError(f"S must be positive, got {S}")
     A = _A_from_db(dBgain)
     w0 = _omega0(f0, Fs)
     cosw0 = np.cos(w0)
@@ -140,6 +144,8 @@ def design_lowshelf(f0: float, dBgain: float, S: float, Fs: float):
 
 
 def design_highshelf(f0: float, dBgain: float, S: float, Fs: float):
+    if S <= 0:
+        raise ValueError(f"S must be positive, got {S}")
     A = _A_from_db(dBgain)
     w0 = _omega0(f0, Fs)
     cosw0 = np.cos(w0)

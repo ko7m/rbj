@@ -3,6 +3,7 @@
 #include <cmath>
 #include <vector>
 #include <string>
+#include <stdexcept>
 
 namespace rbj {
 
@@ -23,6 +24,9 @@ inline double omega0(double f0, double Fs) {
 }
 
 inline double alpha_from_Q(double w0, double Q) {
+    if (Q <= 0.0) {
+        throw std::invalid_argument("Q must be positive");
+    }
     return std::sin(w0) / (2.0 * Q);
 }
 
@@ -130,6 +134,9 @@ inline Coeffs design_peaking(double f0, double Q, double dBgain, double Fs) {
 }
 
 inline Coeffs design_lowshelf(double f0, double dBgain, double S, double Fs) {
+    if (S <= 0.0) {
+        throw std::invalid_argument("S must be positive");
+    }
     double A     = A_from_db(dBgain);
     double w0    = omega0(f0, Fs);
     double cosw0 = std::cos(w0);
@@ -150,6 +157,9 @@ inline Coeffs design_lowshelf(double f0, double dBgain, double S, double Fs) {
 }
 
 inline Coeffs design_highshelf(double f0, double dBgain, double S, double Fs) {
+    if (S <= 0.0) {
+        throw std::invalid_argument("S must be positive");
+    }
     double A     = A_from_db(dBgain);
     double w0    = omega0(f0, Fs);
     double cosw0 = std::cos(w0);

@@ -19,8 +19,8 @@ from user-facing parameters:
 | `design_notch(f0, Q, Fs)` | Center freq, Q, sample rate | |
 | `design_apf(f0, Q, Fs)` | Center freq, Q, sample rate | |
 | `design_peaking(f0, Q, dBgain, Fs)` | + gain in dB | Boost+cut cancel exactly (RBJ Q definition) |
-| `design_lowshelf(f0, dBgain, S, Fs)` | + shelf slope S | S=1 gives steepest monotonic slope |
-| `design_highshelf(f0, dBgain, S, Fs)` | + shelf slope S | |
+| `design_lowshelf(f0, dBgain, S, Fs)` | + shelf slope S | S=1 gives steepest monotonic slope; `S <= 0` raises |
+| `design_highshelf(f0, dBgain, S, Fs)` | + shelf slope S | `S <= 0` raises |
 
 All functions use the bilinear transform with frequency prewarping, exactly as
 specified in the Cookbook (`biquadcookbook.txt`).
@@ -30,7 +30,11 @@ specified in the Cookbook (`biquadcookbook.txt`).
 - `A_from_db(dB)` — amplitude factor: `10^(dB/40)` (RBJ's definition, which
   is `sqrt(linear_gain)`)
 - `omega0(f0, Fs)` — normalized angular frequency: `2*pi*f0/Fs`
-- `alpha_from_Q(w0, Q)` — `sin(w0) / (2*Q)`
+- `alpha_from_Q(w0, Q)` — `sin(w0) / (2*Q)`. Raises (`ValueError` in Python,
+  `std::invalid_argument` in C++) if `Q <= 0`, rather than silently producing
+  `NaN`/`inf` coefficients that would then poison a `Biquad`'s delay state
+  permanently (`NaN` propagates through `z1`/`z2` even across later
+  `set_coeffs()` calls with valid values).
 - `normalize(b0..a2)` — divides all coefficients by a0
 
 ## Biquad Processor
@@ -94,3 +98,8 @@ sequence.
 - **Python uses `__slots__`** on `Biquad` for reduced memory overhead
 - **C++ is header-only**: `rbj_eq.hpp` can be dropped into any project with
   zero build system changes
+- **Q and S are validated at design time**: `Q <= 0` or `S <= 0` raise
+  immediately instead of producing `NaN`/`inf` coefficients — a `Biquad`
+  fed `NaN` coefficients would latch `NaN` into `z1`/`z2` forever, which
+  matters most for `EQBand.update()` in an interactive/live context where a
+  bad parameter could otherwise silence a band permanently until `reset()`

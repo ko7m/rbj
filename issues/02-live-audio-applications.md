@@ -53,36 +53,25 @@ Prints the full device list and default device at startup for diagnostics.
 Uses `device=('pulse', 'pulse')` to explicitly select PulseAudio for both
 input and output.
 
-## `headset_talkback.py` — EQ Experimentation / Talkback
+## `headset_talkback.py` — Duplicate of `live_eq.py`
 
-**Purpose**: A workbench for trying various EQ configurations with
-PulseAudio stereo I/O. Contains many commented-out presets, suggesting it
-was used interactively for experimentation.
+**Correction**: earlier revisions of this doc described `headset_talkback.py`
+as a PulseAudio experimentation workbench (SSB shaping, carrier notch, FSK
+bandpass, etc.). That description was misattributed — it actually belongs to
+`plot_eq.py` (see [`04-utilities-and-scripts.md`](04-utilities-and-scripts.md)).
 
-- **Input**: 2 channels
-- **Output**: 2 channels
-- **Routing**: Separate L/R EQ, only L is configured (R clones L's bands)
+As it stands, `headset_talkback.py` is **byte-for-byte identical** to
+`live_eq.py` (same `md5sum`, unchanged since the initial commit `2031ede`) —
+the Logitech USB headset pass-through script, not a distinct talkback
+experiment. It has the same purpose, input/output shape, and commented-out
+presets as `live_eq.py` above.
 
-### Commented-out EQ Presets
-
-| Preset | Description |
-|--------|-------------|
-| Pass-through | No bands (current default) |
-| SSB-ish shaping | High shelf +6 dB at 300 Hz, low shelf -12 dB at 2.5 kHz |
-| Carrier notch | Notch at 1200 Hz, Q=10 |
-| General 3-band | Low shelf, peaking, high shelf |
-| Boomy | Low shelf +12 dB, mid cut, high shelf -12 dB |
-| Thin and bright | High shelf +15 dB, low shelf -12 dB |
-| Stacked notches | 3 notch filters at 700, 1000, 1500 Hz |
-| 1 kHz notch | Narrow notch at 1 kHz (Q=10, BW ~100 Hz) |
-| **850 Hz BPF** | **Active**: BPF centered at 850 Hz, BW=250 Hz (Q≈3.4) |
-
-The final active configuration is a 250 Hz wide bandpass filter centered at
-850 Hz — this looks like it was being used to isolate an FSK signal
-(170 Hz shift keying, mark/space around 850 Hz is a classic RTTY setup).
-
-The script also calls `plot_eq_response()` at the end to visualize the
-active filter before streaming (xlim 500–1300 Hz, ylim -40 to +5 dB).
+This looks like a stray copy-paste left over from scaffolding the project
+rather than a deliberate second script. If a real "talkback" variant was
+intended, it was never written — worth either deleting this file (it adds no
+value over `live_eq.py`) or fleshing it out into whatever it was meant to be
+(e.g. sending processed audio to a monitor/talkback bus instead of the main
+headphone output).
 
 ## Common Patterns
 
